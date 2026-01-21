@@ -11,5 +11,40 @@ services:
     volumes:
       - db_data:/var/lib/postgresql/data
 
+  cms:
+    image: node:20-bullseye
+    working_dir: /app
+    command: sh -c "corepack enable && corepack prepare pnpm@latest --activate && pnpm install && pnpm dev"
+    volumes:
+      - ./apps/cms:/app
+    environment:
+      DATABASE_CLIENT: postgres
+      DATABASE_HOST: db
+      DATABASE_PORT: 5432
+      DATABASE_NAME: strapi
+      DATABASE_USERNAME: strapi
+      DATABASE_PASSWORD: strapi
+      DATABASE_SSL: "false"
+      HOST: 0.0.0.0
+      PORT: 1337
+    ports:
+      - "1337:1337"
+    depends_on:
+      - db
+
+  web:
+    image: node:20-bullseye
+    working_dir: /app
+    command: sh -c "corepack enable && corepack prepare pnpm@latest --activate && pnpm install && pnpm dev"
+    volumes:
+      - ./apps/web:/app
+    environment:
+      NEXT_PUBLIC_CMS_URL: http://localhost:1337
+      CI: "true"
+    ports:
+      - "3000:3000"
+    depends_on:
+      - cms
+
 volumes:
   db_data:
