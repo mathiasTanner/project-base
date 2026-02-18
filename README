@@ -1,0 +1,246 @@
+🚀 Project Base — Next.js + Strapi + Docker Monorepo Skeleton
+
+This repository is a reusable full-stack web app skeleton designed to be cloned and used as the starting point for multiple projects.
+
+It provides a production-ready stack with:
+
+✅ Next.js (App Router) frontend
+
+✅ Strapi CMS backend
+
+✅ PostgreSQL database
+
+✅ Tailwind CSS + shadcn/ui ready
+
+✅ pnpm + Turborepo monorepo setup
+
+✅ Dockerized services
+
+✅ GitHub Actions CI
+
+✅ Automatic Docker image builds → GHCR
+
+✅ Ready for Infomaniak Jelastic deployment
+
+✅ Optional Stripe integration (separate branch)
+
+This repo focuses on infrastructure and integration, not business features.
+
+🧱 Monorepo Structure
+apps/
+  web/   → Next.js frontend
+  cms/   → Strapi backend
+
+.github/workflows/
+  docker-build.yml → builds & pushes Docker images
+
+docker-compose.yml → local dev database + optional services
+
+
+Root tooling:
+
+pnpm workspaces
+
+turbo
+
+single root lockfile (important)
+
+⚙️ Stack
+Frontend — apps/web
+
+Next.js (App Router)
+
+React
+
+TypeScript
+
+Tailwind v4
+
+shadcn/ui compatible
+
+Server routes for backend & payments
+
+Backend — apps/cms
+
+Strapi v5
+
+PostgreSQL
+
+TypeScript config
+
+Runs locally via pnpm
+
+Runs in production via Docker
+
+DevOps
+
+Docker multi-stage builds
+
+GitHub Actions image pipeline
+
+GHCR registry publishing
+
+Monorepo-aware builds
+
+🧪 Built-in Integration Test (CMS ↔ Web)
+
+A generic Strapi health endpoint exists:
+
+GET /api/health
+→ { ok, service, time }
+
+
+The Next.js homepage fetches this endpoint using:
+
+NEXT_PUBLIC_CMS_URL
+
+
+This proves:
+
+env wiring works
+
+cross-service HTTP works
+
+server-side fetch works
+
+Strapi is reachable
+
+No content models are required for the skeleton.
+
+💻 Local Development
+
+Recommended local dev model:
+
+Run Postgres in Docker
+
+Run Strapi locally
+
+Run Next locally
+
+Start database
+docker compose up -d db
+
+Start Strapi
+cd apps/cms
+pnpm dev
+
+
+Admin panel:
+
+http://localhost:1337/admin
+
+Start Next.js
+cd apps/web
+pnpm dev
+
+
+App:
+
+http://localhost:3000
+
+🔐 Environment Variables
+Web — apps/web/.env.local
+NEXT_PUBLIC_APP_URL=http://localhost:3000
+NEXT_PUBLIC_CMS_URL=http://localhost:1337
+
+
+Template file:
+
+apps/web/.env.example
+
+
+Never commit secrets.
+
+🐳 Docker & CI
+
+Production Dockerfiles:
+
+apps/web/Dockerfile
+apps/cms/Dockerfile
+
+
+GitHub Actions pipeline:
+
+builds images on push to main
+
+pushes to GitHub Container Registry
+
+Images:
+
+ghcr.io/<owner>/project-base-web
+ghcr.io/<owner>/project-base-cms
+
+
+Designed for Jelastic deployment.
+
+💳 Optional Stripe Integration (feature/stripe branch)
+
+Stripe support is implemented on a separate branch so projects can opt-in.
+
+Switch to it when needed:
+
+git checkout feature/stripe
+
+What it adds
+
+Stripe SDK (server-side)
+
+Checkout session endpoint
+
+Webhook endpoint
+
+Test checkout button
+
+Env scaffolding
+
+Safe lazy Stripe initialization
+
+Stripe routes
+POST /api/stripe/checkout
+POST /api/stripe/webhook
+
+Stripe env vars
+
+In apps/web/.env.local:
+
+STRIPE_SECRET_KEY=
+STRIPE_WEBHOOK_SECRET=
+STRIPE_PRICE_ID=
+NEXT_PUBLIC_APP_URL=
+
+
+The Stripe client is lazy-initialized so missing keys return JSON errors instead of crashing the server.
+
+No billing logic is included — this is a skeleton only.
+
+🧠 Design Principles
+
+This skeleton prioritizes:
+
+Reusability
+
+Clean separation of services
+
+Environment-driven config
+
+Optional features via branches
+
+Minimal baked-in domain logic
+
+CI-ready containers
+
+Deployment-first architecture
+
+Do not assume business models exist — this is a base template.
+
+🚀 Typical Usage Per New Project
+Without payments
+git clone <repo>
+git checkout main
+
+With payments
+git clone <repo>
+git checkout feature/stripe
+
+
+(or merge the branch into your project branch)
